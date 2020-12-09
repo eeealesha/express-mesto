@@ -20,7 +20,6 @@ module.exports = {
         "@typescript-eslint"
     ],
     "rules": {
-      "allow": ["id_", "_id"],
-      "allowFunctionParams": true
+      "no-underscore-dangle": 'off'
     }
 };
