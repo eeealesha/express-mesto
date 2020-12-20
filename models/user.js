@@ -8,14 +8,22 @@ const userSchema = new mongoose.Schema({
       required: true
     },
     "about": {
-      type: String
+      type: String,
+      minlength: 2,
+      maxlength: 30,
+      required: true
+
     },
     "avatar": {
-      type: String
-    }
+      type: String,
+      required: true,
+      validate: {
+        validator: function(v) {
+          return /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/g.test(v);
+        },
+        message: props => `${props.value} is not a valid url!`}
+      }
   }
 );
 
-const userModel = mongoose.model('user', userSchema);
-
-module.exports = userModel;
+module.exports = mongoose.model('user', userSchema);

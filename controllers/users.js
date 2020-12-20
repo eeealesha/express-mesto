@@ -19,12 +19,9 @@ const getUsers = (req,res) => {
 };
 
 const createUser = (req,res) => {
-  return User.countDocuments()
-    .then(count => {
-      return User.create({id: count, ...req.body})
+      return User.create({...req.body})
         .then(users => res.status(200).send(users))
         .catch(err =>  res.status(400).send(err))
-    })
 };
 
 module.exports = {getUsers, getProfile, createUser};
