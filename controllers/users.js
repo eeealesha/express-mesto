@@ -40,8 +40,8 @@ const updateUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(404).send({ message: err.message });
-        return res.status(400).send(err);
       }
+      return res.status(400).send(err);
     });
 };
 
@@ -57,8 +57,8 @@ const updateAvatar = (req, res) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(404).send({ message: err.message });
-        return res.status(400).send(err);
       }
+      return res.status(400).send(err);
     });
 };
 
