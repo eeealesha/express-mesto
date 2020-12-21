@@ -38,7 +38,12 @@ const updateUser = (req, res) => {
     { runValidators: true }
   )
     .then((user) => res.status(200).send(user))
-    .catch((err) => res.status(400).send(err));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(404).send({ message: err.message });
+        return res.status(400).send(err);
+      }
+    });
 };
 
 const updateAvatar = (req, res) => {
@@ -50,7 +55,12 @@ const updateAvatar = (req, res) => {
     { runValidators: true }
   )
     .then((user) => res.status(200).send(user))
-    .catch((err) => res.status(400).send(err));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(404).send({ message: err.message });
+        return res.status(400).send(err);
+      }
+    });
 };
 
 module.exports = { getUsers, getProfile, createUser, updateUser, updateAvatar };
