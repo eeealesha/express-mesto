@@ -18,15 +18,14 @@ const getUsers = (req, res) => {
     .catch((err) => res.status(500).send(err));
 };
 
-const createUser = (req, res) =>
-  User.create({ ...req.body })
-    .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(404).send({ message: err.message });
-      }
-      return res.status(500).send(err);
-    });
+const createUser = (req, res) => User.create({ ...req.body })
+  .then((users) => res.status(200).send(users))
+  .catch((err) => {
+    if (err.name === 'ValidationError') {
+      return res.status(404).send({ message: err.message });
+    }
+    return res.status(500).send(err);
+  });
 
 const updateUser = (req, res) => {
   const id = req.user._id;
@@ -35,7 +34,7 @@ const updateUser = (req, res) => {
   User.findOneAndUpdate(
     { _id: id },
     { name: newName, about: newAbout },
-    { runValidators: true }
+    { runValidators: true },
   )
     .then((user) => res.status(200).send(user))
     .catch((err) => {
@@ -52,7 +51,7 @@ const updateAvatar = (req, res) => {
   User.findOneAndUpdate(
     { _id: id },
     { avatar: newAvatar },
-    { runValidators: true }
+    { runValidators: true },
   )
     .then((user) => res.status(200).send(user))
     .catch((err) => {
@@ -63,4 +62,6 @@ const updateAvatar = (req, res) => {
     });
 };
 
-module.exports = { getUsers, getProfile, createUser, updateUser, updateAvatar };
+module.exports = {
+  getUsers, getProfile, createUser, updateUser, updateAvatar,
+};
