@@ -24,4 +24,12 @@ const createUser = (req,res) => {
         .catch(err =>  res.status(400).send(err))
 };
 
-module.exports = {getUsers, getProfile, createUser};
+const updateUser = (req, res) => {
+    console.log(req.params)
+    const user = req.user._id;
+    return User.findByIdAndUpdate({user}, {name:req.params})
+    .then(users => res.status(200).send(users))
+        .catch(err =>  res.status(400).send(err))
+}
+
+module.exports = {getUsers, getProfile, createUser, updateUser};
