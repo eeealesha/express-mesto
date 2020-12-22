@@ -22,7 +22,7 @@ const createUser = (req, res) => User.create({ ...req.body })
   .then((users) => res.status(200).send(users))
   .catch((err) => {
     if (err.name === 'ValidationError') {
-      return res.status(404).send({ message: err.message });
+      return res.status(400).send({ message: err.message });
     }
     return res.status(500).send(err);
   });
@@ -39,9 +39,9 @@ const updateUser = (req, res) => {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(404).send({ message: err.message });
+        return res.status(400).send({ message: err.message });
       }
-      return res.status(400).send(err);
+      return res.status(500).send(err);
     });
 };
 
@@ -56,9 +56,9 @@ const updateAvatar = (req, res) => {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(404).send({ message: err.message });
+        return res.status(400).send({ message: err.message });
       }
-      return res.status(400).send(err);
+      return res.status(500).send(err);
     });
 };
 
