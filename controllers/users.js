@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken'); // импортируем модуль jsonwebtoken
 const User = require('../models/user');
 
 const getProfile = (req, res) => {
@@ -25,6 +26,9 @@ const createUser = (req, res) => {
     .then((hash) => User.create({
       email: req.body.email,
       password: hash, // записываем хеш в базу
+      name: req.body.name,
+      about: req.body.about,
+      avatar: req.body.avatar,
     }))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
@@ -73,6 +77,25 @@ const updateAvatar = (req, res) => {
     });
 };
 
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+
+      // вернём токен
+      res.send({ token });
+    // аутентификация успешна! пользователь в переменной user
+    })
+    .catch((err) => {
+    // ошибка аутентификации
+      res
+        .status(401)
+        .send({ message: err.message });
+    });
+};
+
 module.exports = {
-  getUsers, getProfile, createUser, updateUser, updateAvatar,
+  getUsers, getProfile, createUser, updateUser, updateAvatar, login,
 };
