@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 const getProfile = (req, res) => {
@@ -18,14 +19,24 @@ const getUsers = (req, res) => {
     .catch((err) => res.status(500).send(err));
 };
 
-const createUser = (req, res) => User.create({ ...req.body })
-  .then((users) => res.status(200).send(users))
-  .catch((err) => {
-    if (err.name === 'ValidationError') {
-      return res.status(400).send({ message: err.message });
-    }
-    return res.status(500).send(err);
-  });
+const createUser = (req, res) => {
+  // User.create({ ...req.body });
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => User.create({
+      email: req.body.email,
+      password: hash, // записываем хеш в базу
+    }))
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: err.message });
+      }
+      if (err.code === 11000) {
+        return res.status(400).send({ message: `Пользователь с email: ${req.body.email} уже существует` });
+      }
+      return res.status(500).send(err);
+    });
+};
 
 const updateUser = (req, res) => {
   const id = req.user._id;

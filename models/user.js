@@ -5,8 +5,6 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
-    minlength: 2,
-    maxlength: 30,
     required: true,
     validate: {
       validator(v) {
@@ -18,9 +16,13 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    minlength: 2,
-    maxlength: 30,
     required: true,
+    validate: {
+      validator(v) {
+        return validator.isStrongPassword(v);
+      },
+      message: (props) => `${props.value} is not a strong password!`,
+    },
   },
   name: {
     type: String,
