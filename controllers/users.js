@@ -77,7 +77,7 @@ const updateAvatar = (req, res) => {
     });
 };
 
-module.exports.login = (req, res) => {
+const login = (req, res) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)

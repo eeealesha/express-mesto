@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
+const { createUser, login } = require('./controllers/users');
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
@@ -22,6 +24,11 @@ app.use((req, res, next) => {
 });
 
 app.use(bodyParser.json());
+
+app.post('/signup', createUser);
+app.post('/signin', login);
+
+app.use(auth);
 
 app.use('/', usersRouter);
 app.use('/', cardsRouter);
