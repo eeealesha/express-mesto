@@ -20,8 +20,14 @@ const getUsers = (req, res) => {
     .catch((err) => res.status(500).send(err));
 };
 
+const getCurrentUser = (req, res) => {
+  const id = req.user._id;
+  User.find({ _id: id })
+    .then((user) => res.status(200).send(user))
+    .catch((err) => res.status(500).send(err));
+};
+
 const createUser = (req, res) => {
-  // User.create({ ...req.body });
   bcrypt.hash(req.body.password, 10)
     .then((hash) => User.create({
       email: req.body.email,
@@ -97,5 +103,5 @@ const login = (req, res) => {
 };
 
 module.exports = {
-  getUsers, getProfile, createUser, updateUser, updateAvatar, login,
+  getUsers, getProfile, createUser, updateUser, updateAvatar, login, getCurrentUser,
 };

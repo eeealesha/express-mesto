@@ -5,11 +5,14 @@ const {
   createUser,
   updateUser,
   updateAvatar,
+  getCurrentUser,
 } = require('../controllers/users');
 
 router.get('/users', getUsers);
 
 router.get('/users/:id', getProfile);
+
+router.get('/user/me', getCurrentUser);
 
 router.post('/users', createUser);
 
