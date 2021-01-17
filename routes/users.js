@@ -1,4 +1,6 @@
 const router = require('express').Router();
+const Joi = require('joi');
+
 const {
   getUsers,
   getProfile,

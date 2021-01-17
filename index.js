@@ -28,11 +28,33 @@ app.use(bodyParser.json());
 app.post('/signup', createUser);
 app.post('/signin', login);
 
-app.use('/', auth, usersRouter);
-app.use('/', auth, cardsRouter);
+app.use('/', usersRouter);
+app.use('/', cardsRouter);
 
 app.get('*', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
+});
+
+app.use((err, req, res, next) => {
+  // если у ошибки нет статуса, выставляем 500
+  const { statusCode = 500, message } = err;
+  if (err.kind === 'ObjectId') {
+    res
+      .status(400)
+      .send({
+      // проверяем статус и выставляем сообщение в зависимости от него
+        message: 'Неверно переданы данные',
+      });
+  } else {
+    res
+      .status(statusCode)
+      .send({
+      // проверяем статус и выставляем сообщение в зависимости от него
+        message: statusCode === 500
+          ? 'На сервере произошла ошибка'
+          : message,
+      });
+  }
 });
 
 app.listen(PORT, () => {

@@ -1,17 +1,19 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); // импортируем модуль jsonwebtoken
 const User = require('../models/user');
+const NotFoundError = require('../errors/not-found-error');
 
-const getProfile = (req, res) => {
+const getProfile = (req, res, next) => {
   const { id } = req.params;
   User.findOne({ _id: id })
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Нет пользователя с таким id' });
+        throw new NotFoundError('Нет пользователя с таким id');
       }
       return res.status(200).send(user);
     })
-    .catch((err) => res.status(500).send({ message: `${err}` }));
+    .catch(next);
+  // .catch((err) => res.status(500).send({ message: `${err}` }));
 };
 
 const getUsers = (req, res) => {
