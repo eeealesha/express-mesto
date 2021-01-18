@@ -13,7 +13,6 @@ const getProfile = (req, res, next) => {
       return res.status(200).send(user);
     })
     .catch(next);
-  // .catch((err) => res.status(500).send({ message: `${err}` }));
 };
 
 const getUsers = (req, res) => {
@@ -38,6 +37,7 @@ const createUser = (req, res) => {
       about: req.body.about,
       avatar: req.body.avatar,
     }))
+    .then((user) => User.find({ _id: user._id }))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {

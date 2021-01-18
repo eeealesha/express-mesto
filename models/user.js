@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
       },
       message: (props) => `${props.value} is not a strong password!`,
     },
-    // select: false, // необходимо добавить поле select
+    select: false, // необходимо добавить поле select
   },
   name: {
     type: String,

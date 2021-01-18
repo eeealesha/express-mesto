@@ -4,6 +4,7 @@ const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
+const { celebrate, Joi } = require('celebrate');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const { createUser, login } = require('./controllers/users');
@@ -18,22 +19,33 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useCreateIndex: true,
 });
 
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '5fdf7fde4ecda44055e14854', // вставьте сюда _id созданного в предыдущем пункте пользователя
-//   };
-//   next();
-// });
-
 app.use(bodyParser.json());
 
 app.use(requestLogger);
 
-app.post('/signup', createUser);
-app.post('/signin', login);
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
-app.use('/', usersRouter);
-app.use('/', cardsRouter);
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required()
+      .pattern(new RegExp('^[a-zA-Z0-9]{8,30}$')),
+  }),
+}), createUser);
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required()
+      .pattern(new RegExp('^[a-zA-Z0-9]{8,30}$')),
+  }),
+}), login);
+
+app.use('/', auth, usersRouter);
+app.use('/', auth, cardsRouter);
 
 app.get('*', (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });

@@ -20,8 +20,7 @@ router.post('/users',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),
-      password: Joi.string()
-        .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required().min(8),
+      password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required().min(8),
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
       avatar: Joi.string(),
