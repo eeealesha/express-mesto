@@ -22,10 +22,15 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
+  const id = req.user._id;
   Card.findByIdAndDelete(req.params.cardId)
     .then((card) => {
+      console.log(card);
       if (!card) {
         return res.status(404).send({ message: 'Нет карточки с таким id' });
+      }
+      if (card.owner !== id) {
+        return res.status(400).send({ message: 'Не ты владелец карточки с таким id' });
       }
       res.status(200).send(card);
     })
