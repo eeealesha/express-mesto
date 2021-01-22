@@ -2,14 +2,14 @@ const express = require('express');
 
 require('dotenv').config();
 
-console.log(process.env.NODE_ENV);
+const cors = require('cors');
 
 const app = express();
+app.use(cors());
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const { celebrate, Joi } = require('celebrate');
-const cors = require('cors');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const { createUser, login } = require('./controllers/users');
@@ -23,8 +23,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useFindAndModify: false,
   useCreateIndex: true,
 });
-
-app.use(cors());
 
 app.use(bodyParser.json());
 
