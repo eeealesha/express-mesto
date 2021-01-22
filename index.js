@@ -2,10 +2,7 @@ const express = require('express');
 
 require('dotenv').config();
 
-const cors = require('cors');
-
 const app = express();
-app.use(cors());
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
