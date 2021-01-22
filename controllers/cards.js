@@ -12,7 +12,9 @@ const createCard = (req, res) => {
     link: req.body.link,
     owner: req.user._id,
   })
-    .then((cards) => res.status(200).send(cards))
+    .then((cards) => {
+      res.status(200).send(cards);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(400).send({ message: err.message });
@@ -25,11 +27,10 @@ const deleteCard = (req, res) => {
   const id = req.user._id;
   Card.findByIdAndDelete(req.params.cardId)
     .then((card) => {
-      console.log(card);
       if (!card) {
         return res.status(404).send({ message: 'Нет карточки с таким id' });
       }
-      if (card.owner !== id) {
+      if (card.owner.toString() !== id) {
         return res.status(400).send({ message: 'Не ты владелец карточки с таким id' });
       }
       res.status(200).send(card);

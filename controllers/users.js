@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken'); // импортируем модуль json
 const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-error');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 const getProfile = (req, res, next) => {
   const { id } = req.params;
   User.findOne({ _id: id })
@@ -23,7 +25,7 @@ const getUsers = (req, res) => {
 
 const getCurrentUser = (req, res) => {
   const id = req.user._id;
-  User.find({ _id: id })
+  User.findById({ _id: id })
     .then((user) => res.status(200).send(user))
     .catch((err) => res.status(500).send(err));
 };
@@ -90,8 +92,7 @@ const login = (req, res) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
       // вернём токен
       res.send({ token });
     // аутентификация успешна! пользователь в переменной user

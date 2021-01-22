@@ -12,9 +12,9 @@ const {
 
 router.get('/users', getUsers);
 
-router.get('/users/:id', getProfile);
+router.get('/users/me', getCurrentUser);
 
-router.get('/user/me', getCurrentUser);
+router.get('/users/:id', getProfile);
 
 router.post('/users',
   celebrate({
