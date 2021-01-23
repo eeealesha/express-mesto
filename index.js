@@ -2,12 +2,7 @@ const express = require('express');
 
 require('dotenv').config();
 
-console.log(process.env.NODE_ENV);
-
-const cors = require('cors');
-
 const app = express();
-app.use(cors());
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
