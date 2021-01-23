@@ -1,4 +1,6 @@
 const Card = require('../models/card');
+const NotFoundError = require('../errors/not-found-error');
+const BadReqError = require('../errors/bad-req-error');
 
 const getCards = (req, res) => {
   Card.find({})
@@ -6,7 +8,7 @@ const getCards = (req, res) => {
     .catch((err) => res.status(500).send({ message: `${err}` }));
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   Card.create({
     name: req.body.name,
     link: req.body.link,
@@ -17,25 +19,25 @@ const createCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err.message });
+        throw new BadReqError(err.message);
       }
-      return res.status(500).send({ message: `${err}` });
-    });
+    })
+    .catch(next);
 };
 
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   const id = req.user._id;
   Card.findByIdAndDelete(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: 'Нет карточки с таким id' });
+        throw new NotFoundError('Нет карточки с таким id');
       }
       if (card.owner.toString() !== id) {
-        return res.status(400).send({ message: 'Не ты владелец карточки с таким id' });
+        throw new BadReqError('Не ты владелец карточки с таким id');
       }
       res.status(200).send(card);
     })
-    .catch((err) => res.status(500).send({ message: `${err}` }));
+    .catch(next);
 };
 
 module.exports = { getCards, createCard, deleteCard };

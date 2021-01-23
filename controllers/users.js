@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); // импортируем модуль jsonwebtoken
 const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-error');
+const BadReqError = require('../errors/bad-req-error');
+const NotAuthError = require('../errors/not-auth-error');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -30,7 +32,7 @@ const getCurrentUser = (req, res) => {
     .catch((err) => res.status(500).send(err));
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10)
     .then((hash) => User.create({
       email: req.body.email,
@@ -43,16 +45,16 @@ const createUser = (req, res) => {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err.message });
+        throw new BadReqError(err.message);
       }
       if (err.code === 11000) {
-        return res.status(400).send({ message: `Пользователь с email: ${req.body.email} уже существует` });
+        throw new BadReqError(`Пользователь с email: ${req.body.email} уже существует`);
       }
-      return res.status(500).send(err);
-    });
+    })
+    .catch(next);
 };
 
-const updateUser = (req, res) => {
+const updateUser = (req, res, next) => {
   const id = req.user._id;
   const newName = req.body.name;
   const newAbout = req.body.about;
@@ -64,13 +66,13 @@ const updateUser = (req, res) => {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err.message });
+        throw new BadReqError(err.message);
       }
-      return res.status(500).send(err);
-    });
+    })
+    .catch(next);
 };
 
-const updateAvatar = (req, res) => {
+const updateAvatar = (req, res, next) => {
   const id = req.user._id;
   const newAvatar = req.body.avatar;
   User.findOneAndUpdate(
@@ -81,13 +83,13 @@ const updateAvatar = (req, res) => {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: err.message });
+        throw new BadReqError(err.message);
       }
-      return res.status(500).send(err);
-    });
+    })
+    .catch(next);
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
@@ -99,10 +101,9 @@ const login = (req, res) => {
     })
     .catch((err) => {
     // ошибка аутентификации
-      res
-        .status(401)
-        .send({ message: err.message });
-    });
+      throw new NotAuthError(err.message);
+    })
+    .catch(next);
 };
 
 module.exports = {
