@@ -14,7 +14,13 @@ router.get('/users', getUsers);
 
 router.get('/users/me', getCurrentUser);
 
-router.get('/users/:id', getProfile);
+router.get('/users/:id',
+  celebrate({
+    params: Joi.object().keys({
+      id: Joi.string().required().hex().min(24)
+        .max(24),
+    }),
+  }), getProfile);
 
 router.post('/users',
   celebrate({

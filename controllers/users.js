@@ -61,7 +61,7 @@ const updateUser = (req, res, next) => {
   User.findOneAndUpdate(
     { _id: id },
     { name: newName, about: newAbout },
-    { runValidators: true },
+    { runValidators: true, new: true },
   )
     .then((user) => res.status(200).send(user))
     .catch((err) => {
@@ -78,7 +78,7 @@ const updateAvatar = (req, res, next) => {
   User.findOneAndUpdate(
     { _id: id },
     { avatar: newAvatar },
-    { runValidators: true },
+    { runValidators: true, new: true },
   )
     .then((user) => res.status(200).send(user))
     .catch((err) => {

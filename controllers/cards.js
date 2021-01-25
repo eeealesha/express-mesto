@@ -27,17 +27,25 @@ const createCard = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   const id = req.user._id;
-  Card.findByIdAndDelete(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Нет карточки с таким id');
       }
       if (card.owner.toString() !== id) {
         throw new BadReqError('Не ты владелец карточки с таким id');
+      } else {
+        Card.findByIdAndDelete(req.params.cardId)
+        // eslint-disable-next-line no-shadow
+          .then((card) => {
+            res.status(200).send(card);
+          })
+          .catch(next);
       }
-      res.status(200).send(card);
     })
     .catch(next);
 };
 
-module.exports = { getCards, createCard, deleteCard };
+module.exports = {
+  getCards, createCard, deleteCard,
+};

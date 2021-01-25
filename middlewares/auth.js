@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
+// eslint-disable-next-line consistent-return
 module.exports = (req, res, next) => {
   // тут будет вся авторизация
   const { authorization } = req.headers;

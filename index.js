@@ -2,8 +2,6 @@ const express = require('express');
 
 require('dotenv').config();
 
-console.log(process.env.NODE_ENV);
-
 const cors = require('cors');
 
 const app = express();
@@ -17,6 +15,7 @@ const cardsRouter = require('./routes/cards');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const NotFoundError = require('./errors/not-found-error');
 
 const { PORT = 3000 } = process.env;
 
@@ -41,6 +40,9 @@ app.post('/signup', celebrate({
     email: Joi.string().required().email(),
     password: Joi.string().required()
       .pattern(new RegExp('^[a-zA-Z0-9]{8,30}$')),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string(),
   }),
 }), createUser);
 app.post('/signin', celebrate({
@@ -48,14 +50,17 @@ app.post('/signin', celebrate({
     email: Joi.string().required().email(),
     password: Joi.string().required()
       .pattern(new RegExp('^[a-zA-Z0-9]{8,30}$')),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string(),
   }),
 }), login);
 
 app.use('/', auth, usersRouter);
 app.use('/', auth, cardsRouter);
 
-app.get('*', (req, res) => {
-  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
+app.get('*', () => {
+  throw new NotFoundError('Запрашиваемый ресурс не найден');
 });
 
 app.use(errorLogger);
@@ -63,6 +68,7 @@ app.use(errorLogger);
 // обработчики ошибок
 app.use(errors()); // обработчик ошибок celebrate
 
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
   const { statusCode = 500, message } = err;
@@ -86,5 +92,6 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log(`App is on port ${PORT}`);
 });
