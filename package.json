@@ -32,7 +32,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "deploy": "scp -r ./.env eeealesha@178.154.231.41:/home/eeealesha/express-mesto"
   },
   "repository": {
     "type": "git",
